@@ -1,0 +1,144 @@
+import numpy as np
+import scipy.stats as ss
+import matplotlib.pyplot as plt
+#generating example regression Data
+n = 100
+beta_0 = 5
+beta_1 = 2
+np.random.seed(1)
+x = 10*ss.uniform.rvs(size=n)
+y = beta_0 + beta_1*x + ss.norm.rvs(loc=0,scale=1,size=n)
+plt.figure()
+plt.plot(x,y,'o',ms=5)
+xx=np.array([0,10])
+plt.plot(xx,beta_0+beta_1*xx)
+plt.xlabel('x')
+plt.ylabel('y')
+Text(0, 0.5, 'y')
+
+np.mean(x)
+4.8587792760014565
+np.mean(y)
+14.80142786070299
+def compute_rss(y_estimate, y):
+  return sum(np.power(y-y_estimate, 2))
+def estimate_y(x, b_0, b_1):
+  return b_0 + b_1 * x
+rss = compute_rss(estimate_y(x, beta_0, beta_1), y)
+print(rss)
+81.540007425512
+rss = []
+slopes = np.arange(-10,15,0.001)
+for slope in slopes:
+    rss.append(np.sum((y-beta_0-slope*x)**2))
+ 
+ind_min = np.argmin(rss)
+print(slopes[ind_min])
+2.003999999993347
+#plot figure
+plt.figure()
+plt.plot(slopes,rss)
+plt.xlabel('Slope')
+plt.ylabel('Rss')
+Text(0, 0.5, 'Rss')
+
+import statsmodels.api as sm
+mod = sm.OLS(y,x)
+est = mod.fit()
+print(est.summary())
+                                 OLS Regression Results                                
+=======================================================================================
+Dep. Variable:                      y   R-squared (uncentered):                   0.968
+Model:                            OLS   Adj. R-squared (uncentered):              0.967
+Method:                 Least Squares   F-statistic:                              2974.
+Date:                Fri, 08 Mar 2024   Prob (F-statistic):                    1.14e-75
+Time:                        16:24:06   Log-Likelihood:                         -246.89
+No. Observations:                 100   AIC:                                      495.8
+Df Residuals:                      99   BIC:                                      498.4
+Df Model:                           1                                                  
+Covariance Type:            nonrobust                                                  
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             2.7569      0.051     54.538      0.000       2.657       2.857
+==============================================================================
+Omnibus:                        7.901   Durbin-Watson:                   1.579
+Prob(Omnibus):                  0.019   Jarque-Bera (JB):                3.386
+Skew:                           0.139   Prob(JB):                        0.184
+Kurtosis:                       2.143   Cond. No.                         1.00
+==============================================================================
+
+Notes:
+[1] R² is computed without centering (uncentered) since the model does not contain a constant.
+[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+X = sm.add_constant(x)
+mod = sm.OLS(y,X)
+est = mod.fit()
+print(est.summary())
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.977
+Model:                            OLS   Adj. R-squared:                  0.977
+Method:                 Least Squares   F-statistic:                     4115.
+Date:                Fri, 08 Mar 2024   Prob (F-statistic):           7.47e-82
+Time:                        16:27:17   Log-Likelihood:                -130.72
+No. Observations:                 100   AIC:                             265.4
+Df Residuals:                      98   BIC:                             270.7
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          5.2370      0.174     30.041      0.000       4.891       5.583
+x1             1.9685      0.031     64.151      0.000       1.908       2.029
+==============================================================================
+Omnibus:                        2.308   Durbin-Watson:                   2.206
+Prob(Omnibus):                  0.315   Jarque-Bera (JB):                1.753
+Skew:                          -0.189   Prob(JB):                        0.416
+Kurtosis:                       3.528   Cond. No.                         11.2
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+n = 500
+beta_0 = 5
+beta_1 = 2
+beta_2 = -1
+np.random.seed(1)
+x_1 = 10*ss.uniform.rvs(size = n)
+x_2 = 10*ss.uniform.rvs(size = n)
+y = beta_0+beta_1*x_1+beta_2*x_2 + ss.norm.rvs(loc = 0, scale = 1, size=n)
+X = np.stack([x_1,x_2], axis =1)
+from mpl_toolkits.mplot3d import Axes3D
+fig = plt.figure()
+ax = fig.add_subplot(111, projection = '3d')
+ax.scatter(X[:,0],X[:,1],y,c=y)
+ax.set_xlabel('$x_1$')
+ax.set_ylabel('$x_2$')
+ax.set_zlabel('$y$')
+Text(0.5, 0, '$y$')
+
+from sklearn.linear_model import LinearRegression 
+lm = LinearRegression(fit_intercept = True)
+lm.fit(X,y)
+LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1)
+lm.intercept_
+5.154077763777245
+lm.coef_[0]
+1.9999378989891412
+x_0 = np.array([2,4])
+lm.predict(x_0.reshape(1,-1))
+array([5.07289561])
+lm.score(X,y)
+0.9798997316600129
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test=train_test_split(X,y,train_size=0.5,random_state=1)
+lm = LinearRegression(fit_intercept=True)
+lm.fit(X_train, y_train)
+LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1)
+
+LinearRegression
+LinearRegression(n_jobs=1)
+lm.score(X_test,y_test)
+0.9794930834681773
+ 
